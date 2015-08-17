@@ -1,17 +1,30 @@
-<!DOCTYPE html>
-{% load staticfiles%}
+<!DOCTYPE html> {% load staticfiles%}
 <html lang="en">
+
 <head>
-	<meta charset="UTF-8">
-	<title>Rango</title>
-	<link rel="stylesheet" type="text/css" href="{%static "css/base.css"%}">
-	<script type="text/javascript" src="{%static "js/jquery.js"%}"></script>
+    <meta charset="UTF-8">
+    <title>Rango</title>
+    <link rel="stylesheet" type="text/css" href="{%static " css/base.css "%}">
+    <script type="text/javascript" src="{%static " js/jquery.js "%}"></script>
 </head>
+
 <body>
-	<h1>Rango says...</h1>
-	hello world!<strong>{{boldmessage}}</strong>
-	<a href="/rango/about">About</a><br/>
-	<img src="{%static "images/google.jpg"%}" alt="Picture of rango">
-	<h1>including static media</h1>
+    <h1>Rango says...</h1> hello world!<strong>{{boldmessage}}</strong>
+    <a href="/rango/about">About</a>
+    <br/>
+    <img src="{%static "images/google.jpg"%}" alt="Picture of rango">
+    <h1>including static media</h1> 
+    
+     {% if categories %}
+            <ul>
+                {% for category in categories %}
+                <!-- Following line changed to add an HTML hyperlink -->
+                <li><a href="/rango/category/{{ category.slug }}">{{ category.name }}</a></li>
+                {% endfor %}
+            </ul>
+       {% else %}
+            <strong>There are no categories present.</strong>
+       {% endif %}
 </body>
+
 </html>
