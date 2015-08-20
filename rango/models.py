@@ -8,7 +8,6 @@ class Category(models.Model):
 	views = models.IntegerField(default=0)
 	likes = models.IntegerField(default=0)
 	slug = models.SlugField(unique=True)
-		#null=True,blank=True)
 	def save(self, *args, **kwargs):
 		if slugify(self.name):
 			self.slug = slugify(self.name)

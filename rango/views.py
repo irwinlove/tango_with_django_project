@@ -4,7 +4,7 @@ from rango.forms import CategoryForm,PageForm
 # from rango.models import Page
 # Create your views here.
 from django.http import HttpResponse
-
+import pdb;
 def index(request):
 	category_list = Category.objects.order_by('-likes')[:5]
 	context_dict = {'boldmessage':"i am bold font from the context",'categories':category_list}
@@ -25,7 +25,6 @@ def category(request,category_name_slug):
         context_dict['pages'] = pages
         context_dict['category'] = category
         context_dict['category_name_url'] = category_name_slug
-        pass
     except Category.DoesNotExist:
         pass
     return render(request,'rango/category.html',context_dict)
@@ -42,12 +41,15 @@ def add_category(request):
     context_dict = {'form':form}        
     return render(request,'rango/add_category.html',context_dict)
 def add_page(request,category_name_slug):
+    pdb.set_trace()
     try:
         cat = Category.objects.get(slug=category_name_slug)
     except Category.DoesNotExist:
         cat = None
     if request.method == 'POST':
         form = PageForm(request.POST)
+        print category_name_slug
+        print cat
         if form.is_valid():
             if cat:
                 page = form.save(commit=False)
@@ -56,8 +58,13 @@ def add_page(request,category_name_slug):
                 page.save()
                 return category(request,category_name_slug)
         else:
+            # print form
             print form.errors
+            pass
     else:
         form = PageForm()
-    context_dict = {'form':form,'category': cat}
+    # print category_name_slug
+    # print cat
+    # print form
+    context_dict = {'form':form,'category': cat,'category_name_url': category_name_slug}
     return render(request,'rango/add_page.html',context_dict)
