@@ -15,8 +15,8 @@ def index(request):
 	pass
 
 def about(request):
-    return HttpResponse("Rango says here is the about page<br/> <a href='/rango/'>index</a>")
-    pass
+    # return HttpResponse("Rango says here is the about page<br/> <a href='/rango/'>index</a>")
+    return render(request, 'rango/about.html', {})
 
 def category(request,category_name_slug):
     context_dict = {}
@@ -102,7 +102,7 @@ def user_login(request):
         if user:
             if user.is_active:
                 login(request,user)
-                return HttpResponseRedirect('/rango')
+                return HttpResponseRedirect('/rango/')
             else:
                 return HttpResponse("Your Rango account is disable.")
         else:
