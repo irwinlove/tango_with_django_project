@@ -6,13 +6,31 @@ from django.contrib.auth.decorators import login_required
 # Create your views here.
 from django.http import HttpResponse,HttpResponseRedirect
 from django.contrib.auth import authenticate,login,logout
+from datetime import datetime
 import pdb;
 def index(request):
-	category_list = Category.objects.order_by('-likes')[:10]
-	context_dict = {'boldmessage':"i am bold font from the context",'categories':category_list}
+    # request.session.set_test_cookie()
+    category_list = Category.objects.order_by('-likes')[:10]
+    context_dict = {'categories':category_list,}
 	#return HttpResponse("Rango says: Hello world! <br/> <a href='/rango/about'>About</a>")
-	return render(request,'rango/index.html',context_dict)
-	pass
+    visits = int(request.COOKIES.get('visits','1'))
+    reset_last_visit_time = False
+    response = render(request,'rango/index.html',context_dict)
+    if 'last_visit' in request.COOKIES:
+        last_visit = request.COOKIES['last_visit']
+        last_visit_time = datetime.strptime(last_visit[:-7],"%Y-%m-%d %H:%M:%S")
+        if (datetime.now()-last_visit_time).seconds >5:
+            visits = visits+1
+            reset_last_visit_time = True
+    else:
+        reset_last_visit_time = True
+        context_dict['visits'] = visits
+        response =render(request,'rango/index.html',context_dict)
+    if reset_last_visit_time:
+        response.set_cookie('last_visit',datetime.now())
+        response.set_cookie('visits',visits)
+    return response
+    # return render(request,'rango/index.html',context_dict)
 
 def about(request):
     # return HttpResponse("Rango says here is the about page<br/> <a href='/rango/'>index</a>")
@@ -71,6 +89,9 @@ def add_page(request,category_name_slug):
     context_dict = {'form':form,'category': cat,'category_name_url': category_name_slug}
     return render(request,'rango/add_page.html',context_dict)
 def register(request):
+    if request.session.test_cookie_worked:
+        print ">>>>>test cookie worked<<<<<<<<<<"
+        request.session.delete_test_cookie()
     registered = False
     if request.method == 'POST':
         user_form=UserForm(data=request.POST)
