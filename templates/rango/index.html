@@ -3,14 +3,18 @@
 {%block title%}{{category_name}}{%endblock%}
 {% block body_block %}
     {% if user.is_authenticated %}
-    <h1>Rango says... hello {{ user.username }}!</h1>
+    <div class="page-header">
+        <h1>Rango says... hello {{ user.username }}!</h1>
     {% else %}
     <h1>Rango says... hello viewer!</h1>
     {% endif %}
-    <br/>
+    </div>
+ <!--    <br/>
     <img src="{%static "images/google.jpg"%}" alt="Picture of rango">
-    <h1>including static media</h1> 
-    
+    <h1>including static media</h1>  -->
+    <div class="row placeholders">
+            <div class="col-xs-12 col-sm-6 placeholder">
+               <h4>Categories</h4>
      {% if categories %}
             <ul>
                 {% for category in categories %}
@@ -21,6 +25,8 @@
        {% else %}
             <strong>There are no categories present.</strong>
        {% endif %}
+            </div>
+    </div>
        <p>visits:{{ visits }}</p>
-       <p>Last_visit_time:{{ last_visit }}</p>
+       <p>Last_visit_time:{{ last_visit_time }}</p>
 {%endblock%}

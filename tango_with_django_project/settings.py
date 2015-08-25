@@ -14,7 +14,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 TEMPLATE_PATH = os.path.join(BASE_DIR,'templates')
 STATIC_PATH = os.path.join(BASE_DIR,'static')
 MEDIA_PATH = os.path.join(BASE_DIR,'media')
-LOGIN_URL = '/rango/login/'
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
 
@@ -38,6 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'registration',
     'rango',
 )
 
@@ -88,3 +89,11 @@ STATICFILES_DIRS = (STATIC_PATH,)
 
 MEDIA_URL= '/media/'
 MEDIA_ROOT = MEDIA_PATH
+
+
+#registration seting
+REGISTRATION_OPEN = True
+ACCOUNT_ACTIVATION_DAYS =1
+REGISTRATION_AUTO_LOGIN=True
+LOGIN_REDIRECT_URL='/rango/'
+LOGIN_URL = '/accounts/login/'

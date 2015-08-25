@@ -13,22 +13,28 @@ def index(request):
     category_list = Category.objects.order_by('-likes')[:10]
     context_dict = {'categories':category_list,}
 	#return HttpResponse("Rango says: Hello world! <br/> <a href='/rango/about'>About</a>")
-    visits = int(request.COOKIES.get('visits','1'))
+    visits = request.session.get('visits')
+    if request.session.get('visits'):
+        count=request.session.get('visits')
+    else:
+        count=0
     reset_last_visit_time = False
-    response = render(request,'rango/index.html',context_dict)
-    if 'last_visit' in request.COOKIES:
-        last_visit = request.COOKIES['last_visit']
-        last_visit_time = datetime.strptime(last_visit[:-7],"%Y-%m-%d %H:%M:%S")
-        if (datetime.now()-last_visit_time).seconds >5:
-            visits = visits+1
+    last_visit=request.session.get('last_visit')
+    if last_visit:
+        last_visit_time = datetime.strptime(last_visit[:-7], "%Y-%m-%d %H:%M:%S")
+        context_dict['last_visit_time']=last_visit_time
+        if (datetime.now()-last_visit_time).seconds >0:
+            count = count+1
             reset_last_visit_time = True
     else:
         reset_last_visit_time = True
-        context_dict['visits'] = visits
-        response =render(request,'rango/index.html',context_dict)
     if reset_last_visit_time:
-        response.set_cookie('last_visit',datetime.now())
-        response.set_cookie('visits',visits)
+        request.session['last_visit']=str(datetime.now())
+        request.session['visits']=visits
+        last_visit_time=str(datetime.now())
+    context_dict['visits'] = count
+    context_dict['last_visit_time']=last_visit_time
+    response=render(request,'rango/index.html',context_dict)
     return response
     # return render(request,'rango/index.html',context_dict)
 
@@ -138,3 +144,17 @@ def user_logout(request):
     logout(request)
     return HttpResponseRedirect('/rango/')
         
+def track_url(request):
+    page_id = None
+    url='/rango/'
+    if request.method=='GET':
+        if 'page_id' in request.GET:
+            page_id = request.GET['page_id']
+            try:
+                page =Page.objects.get(id=page_id)
+                page.views = page.views + 1
+                page.save()
+                url=page.url
+            except Page.DoesNotExist:
+                pass
+    return  HttpResponseRedirect(url)
